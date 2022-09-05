@@ -160,9 +160,11 @@ namespace Robot
 			static const int RefreshTime = 6; //msec
 			unsigned char m_ControlTable[MAXNUM_ADDRESS];
 			unsigned char m_BulkReadTxPacket[MAXNUM_TXPARAM + 10];
+                        unsigned char m_SyncReadTxPacket[MAXNUM_TXPARAM + 10];
 
 			int TxRxPacket(unsigned char *txpacket, unsigned char *rxpacket, int priority, bool transformToINST_READ);
                         int TxRxBulkPacket(unsigned char *txpacket, unsigned char *rxpacket, int priority);
+                        int TxRxSynckPacket(unsigned char *txpacket, unsigned char *rxpacket, int priority);
 			unsigned char CalculateChecksum(unsigned char *packet);
 
 		public:
@@ -198,7 +200,9 @@ namespace Robot
 			int SyncWrite(int start_addr, int each_length, int number, int *pParam);
 
 			void MakeBulkReadPacket();
+                        void MakeSyncReadPacket(int address, int length);
 			int BulkRead();
+                        int SyncRead(); 
 
 			// Utility
 			static int MakeWord(int lowbyte, int highbyte);
