@@ -9,9 +9,9 @@
 #include "cmd_process.h"
 //#include "PS3Controller.h"
 
-#define MOTION_FILE_PATH    "../../../Data/motion_4096.bin"
+#define MOTION_FILE_PATH    "../../../../Data/motion_4096.bin"
 
-#define INI_FILE_PATH       "../../../Data/config.ini"
+#define INI_FILE_PATH       "../../../../Data/config.ini"
 
 using namespace Robot;
 
