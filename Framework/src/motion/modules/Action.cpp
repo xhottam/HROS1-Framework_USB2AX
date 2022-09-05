@@ -16,7 +16,7 @@ Action* Action::m_UniqueInstance = new Action();
 
 Action::Action()
 {
-    DEBUG_PRINT = true;
+    DEBUG_PRINT = false;
     m_ActionFile = 0;
     m_Playing = false;
 }

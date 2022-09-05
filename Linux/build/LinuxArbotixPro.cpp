@@ -19,7 +19,7 @@ using namespace Robot;
 
 LinuxArbotixPro::LinuxArbotixPro(const char* name)
 {
-	DEBUG_PRINT = false;
+	DEBUG_PRINT = true;
 	m_Socket_fd = -1;
 	m_PacketStartTime = 0;
 	m_PacketWaitTime = 0;
@@ -43,8 +43,49 @@ void LinuxArbotixPro::SetPortName(const char* name)
 {
 	strcpy(m_PortName, name);
 }
-
 bool LinuxArbotixPro::OpenPort()
+{
+        struct termios newtio;
+        struct serial_struct serinfo;
+        double baudrate = 1000000.0; //bps (1Mbps)
+
+        ClosePort();
+
+        if (DEBUG_PRINT == true)
+                printf("\n%s open ", m_PortName);
+
+        if ((m_Socket_fd = open(m_PortName, O_RDWR | O_NOCTTY | O_NONBLOCK)) < 0)
+                goto UART_OPEN_ERROR;
+
+        if (DEBUG_PRINT == true)
+                printf("success!\n");
+
+        // You must set 38400bps!
+        memset(&newtio, 0, sizeof(newtio));
+        newtio.c_cflag      = B1000000 | CS8 | CLOCAL | CREAD;
+        newtio.c_iflag      = IGNPAR;
+        newtio.c_oflag      = 0;
+        newtio.c_lflag      = 0;
+        newtio.c_cc[VTIME]  = 0;
+        newtio.c_cc[VMIN]   = 0;
+        tcflush(m_Socket_fd, TCIFLUSH);
+        tcsetattr(m_Socket_fd, TCSANOW, &newtio);
+        if (m_Socket_fd == -1 )
+           goto UART_OPEN_ERROR; 
+  
+        m_ByteTransferTime = (1000.0 / baudrate) * 12.0;
+    
+        return true;
+        
+UART_OPEN_ERROR:
+        if (DEBUG_PRINT == true)
+                printf("failed!\n");
+      ClosePort();
+        return false;
+}
+
+
+/**bool LinuxArbotixPro::OpenPort()
 {
 	struct termios newtio;
 	struct serial_struct serinfo;
@@ -80,6 +121,7 @@ bool LinuxArbotixPro::OpenPort()
 
 	serinfo.flags &= ~ASYNC_SPD_MASK;
 	serinfo.flags |= ASYNC_SPD_CUST;
+        serinfo.flags |= ASYNC_LOW_LATENCY;
 	serinfo.custom_divisor = serinfo.baud_base / baudrate;
 
 	if (ioctl(m_Socket_fd, TIOCSSERIAL, &serinfo) < 0)
@@ -103,7 +145,7 @@ UART_OPEN_ERROR:
 		printf("failed!\n");
 	ClosePort();
 	return false;
-}
+}*/
 
 bool LinuxArbotixPro::SetBaud(int baud)
 {
@@ -121,6 +163,7 @@ bool LinuxArbotixPro::SetBaud(int baud)
 
 	serinfo.flags &= ~ASYNC_SPD_MASK;
 	serinfo.flags |= ASYNC_SPD_CUST;
+        serinfo.flags |= ASYNC_LOW_LATENCY;
 	serinfo.custom_divisor = serinfo.baud_base / baudrate;
 
 	if (ioctl(m_Socket_fd, TIOCSSERIAL, &serinfo) < 0)

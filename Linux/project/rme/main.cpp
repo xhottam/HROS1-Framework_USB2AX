@@ -15,7 +15,8 @@
 
 using namespace Robot;
 
-LinuxArbotixPro linux_arbotixpro("/dev/ttyUSB0");
+//LinuxArbotixPro linux_arbotixpro("/dev/ttyUSB0");
+LinuxArbotixPro linux_arbotixpro("/dev/ttyACM0");
 ArbotixPro arbotixpro(&linux_arbotixpro);
 LinuxMotionTimer linuxMotionTimer;
 

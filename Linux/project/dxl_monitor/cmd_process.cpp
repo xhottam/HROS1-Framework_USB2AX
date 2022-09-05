@@ -73,6 +73,9 @@ const char *GetIDString(int id)
 		case ArbotixPro::ID_CM:
 			return "ARBOTIX_PRO";
 
+                case 253:
+                        return "USB2AX";
+
 //	case JointData::ID_TORSO_ROTATE:
 //		return "TORSO_ROTATE";
 
@@ -137,6 +140,7 @@ void Scan(ArbotixPro *arbotixpro)
 					printf("                                  ... FAIL\r");
 					printf(" Check ID:%d(%s)\n", id, GetIDString(id));
 				}
+                        
 		}
 
 	printf("\n");

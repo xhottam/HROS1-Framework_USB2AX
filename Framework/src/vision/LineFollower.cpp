@@ -49,7 +49,7 @@ LineFollower::LineFollower()
 	m_RLTurn = 0;
 	m_ScanStartTime = 0;
 	m_HeadScanCount = 0;
-	DEBUG_PRINT = false;
+	DEBUG_PRINT = true;
 	m_Line = 0;
 	bFullAuto = false;
 	bHeadAuto = false;

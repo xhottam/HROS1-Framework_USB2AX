@@ -41,7 +41,7 @@ BallFollower::BallFollower()
 	m_GoalRLTurn = 0;
 	m_FBStep = 0;
 	m_RLTurn = 0;
-	DEBUG_PRINT = false;
+	DEBUG_PRINT = true;
 	KickBall = 0;
 }
 

@@ -378,6 +378,7 @@ void MotionManager::Process()
                 }
             m_ArbotixPro->m_DelayedWords = 0;
         }
+    //fprintf(stderr, "BulkRead()\n");
     m_ArbotixPro->BulkRead();
     // update joint temps
     for (int id = JointData::ID_MIN; id <= JointData::ID_MAX; id++)
@@ -450,7 +451,7 @@ void MotionManager::adaptTorqueToVoltage()
     const int FULL_TORQUE_VOLTAGE = 130;
     int voltage;
     // torque is only reduced if it is greater then FULL_TORQUE_VOLTAGE
-    if (m_ArbotixPro->ReadByte(ArbotixPro::ID_CM, ArbotixPro::P_VOLTAGE, &voltage, 0) != ArbotixPro::SUCCESS)
+    if (m_ArbotixPro->ReadByte(ArbotixPro::ID_CM, ArbotixPro::P_VOLTAGE, &voltage, 0) == ArbotixPro::SUCCESS)
         return;
 
     //Check if voltage has dropped too low; if so kill the servos and issue a poweroff command

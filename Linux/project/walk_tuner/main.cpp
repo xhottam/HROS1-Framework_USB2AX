@@ -40,7 +40,7 @@ int main(int argc, char *argv[])
 
     change_current_dir();
 
-    LinuxArbotixPro linux_arbotixpro("/dev/ttyUSB0");
+    LinuxArbotixPro linux_arbotixpro("/dev/ttyACM0");
     ArbotixPro arbotixpro(&linux_arbotixpro);
     minIni* ini;
     if (argc == 2)

@@ -26,8 +26,8 @@
 #define M_INI   ((char *)"../../../Data/slow-walk.ini")
 #define SCRIPT_FILE_PATH    "script.asc"
 
-#define U2D_DEV_NAME0       "/dev/ttyUSB0"
-#define U2D_DEV_NAME1       "/dev/ttyUSB1"
+#define U2D_DEV_NAME0       "/dev/ttyACM0"
+#define U2D_DEV_NAME1       "/dev/ttyACM1"
 
 LinuxArbotixPro linux_arbotixpro(U2D_DEV_NAME0);
 ArbotixPro arbotixpro(&linux_arbotixpro);
