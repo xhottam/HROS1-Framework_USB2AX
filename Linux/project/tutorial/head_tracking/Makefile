@@ -7,7 +7,7 @@
 #
 ###############################################################
 
-TARGET = head_tracking
+TARGET = bin/head_tracking
 
 INCLUDE_DIRS = -I../../../include -I../../../../Framework/include
 

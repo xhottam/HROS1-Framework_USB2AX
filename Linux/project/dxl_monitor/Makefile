@@ -7,7 +7,7 @@
 #
 ###############################################################
 
-TARGET = dxl_monitor
+TARGET = bin/dxl_monitor
 
 INCLUDE_DIRS = -I../../include -I../../../Framework/include
 

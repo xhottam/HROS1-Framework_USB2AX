@@ -7,7 +7,7 @@
 #
 ###############################################################
 
-TARGET = demo
+TARGET = bin/demo
 
 INCLUDE_DIRS = -I../../include -I../../../Framework/include
 

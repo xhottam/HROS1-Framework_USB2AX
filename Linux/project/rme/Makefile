@@ -7,7 +7,7 @@
 #
 ###############################################################
 
-TARGET = rme
+TARGET = bin/rme
 
 CXX = g++
 INCLUDE_DIRS = -I../../include -I../../../Framework/include
