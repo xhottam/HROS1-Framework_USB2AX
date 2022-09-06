@@ -12,9 +12,6 @@
 
 using namespace Robot;
 
-//#define SYNC_READ_ON
-#define BULK_READ_ON
-
 #define ID		         	(2)
 #define LENGTH				(3)
 #define INSTRUCTION			(4)
@@ -25,12 +22,12 @@ using namespace Robot;
 #define INST_PING			(1)
 #define INST_READ			(2)
 #define INST_WRITE			(3)
-#define INST_REG_WRITE		        (4)
+#define INST_REG_WRITE		(4)
 #define INST_ACTION			(5)
 #define INST_RESET			(6)
-#define INST_SYNC_WRITE		        (131)   // 0x83
-#define INST_SYNC_READ                  (132)   // 0x84
-#define INST_BULK_READ                  (146)   // 0x92
+#define INST_SYNC_WRITE		(131)   // 0x83
+#define INST_SYNC_READ      (132)   // 0x84
+#define INST_BULK_READ      (146)   // 0x92
 
 
 BulkReadData::BulkReadData() :
@@ -354,7 +351,7 @@ int ArbotixPro::TxRxPacket(unsigned char *txpacket, unsigned char *rxpacket, int
 		}
 
 	if (length < (MAXNUM_TXPARAM + 6))
-		{
+			{
                 bool isBulk = false;
                 bool isSync = false; 
 
@@ -371,95 +368,89 @@ int ArbotixPro::TxRxPacket(unsigned char *txpacket, unsigned char *rxpacket, int
 	                    isSync = true;
                 } 
                 if (!isBulk && !isSync)
-	  	        {
-		            if (m_Platform->WritePort(txpacket, length) == length)
-				{
-					if (txpacket[ID] != ID_BROADCAST)
-					{
-                                            if (DEBUG_PRINT == true)
-                                            {
-                                               	fprintf(stderr, "txpacket[ID] != ID_BROADCAST\n");
-                                            }
-					    int to_length = 0;
-
-	                                    if (txpacket[INSTRUCTION] == INST_READ)
-						to_length = txpacket[PARAMETER + 1] + 6;
-					    else
-						to_length = 6;
-
-					    m_Platform->FlushPort();
-				            m_Platform->SetPacketTimeout(length);
-
-				   	    int get_length = 0;
-				            if (DEBUG_PRINT == true)
-						fprintf(stderr, "RX: ");
-
-					    while (1)
-					        {
-							length = m_Platform->ReadPort(&rxpacket[get_length], to_length - get_length);
-							if (DEBUG_PRINT == true)
-								{
-									for (int n = 0; n < length; n++)
-										fprintf(stderr, "%.2X ", rxpacket[get_length + n]);
-								}
-								get_length += length;
-
-								if (get_length == to_length)
+	  	       		{
+		            	if (m_Platform->WritePort(txpacket, length) == length)
+							{	
+								if (txpacket[ID] != ID_BROADCAST)
 									{
-									// Find packet header
-									int i;
-									for (i = 0; i < (get_length - 1); i++)
-										{
-											if (rxpacket[i] == 0xFF && rxpacket[i + 1] == 0xFF)
-												break;
-											else if (i == (get_length - 2) && rxpacket[get_length - 1] == 0xFF)
-												break;
-										}
+										int to_length = 0;
 
-									if (i == 0)
-										{
-										// Check checksum
-										unsigned char checksum = CalculateChecksum(rxpacket);
-										if (DEBUG_PRINT == true)
-											fprintf(stderr, "CHK:%.2X\n", checksum);
-
-										if (rxpacket[get_length - 1] == checksum)
-											res = SUCCESS;
+										if (txpacket[INSTRUCTION] == INST_READ)
+											to_length = txpacket[PARAMETER + 1] + 6;
 										else
-											res = RX_CORRUPT;
+											to_length = 6;
 
-										break;
-										}
-									else
-										{
-										for (int j = 0; j < (get_length - i); j++)
-											rxpacket[j] = rxpacket[j + i];
-										get_length -= i;
-										}
-								}
-							else
-								{
-									if (m_Platform->IsPacketTimeout() == true)
-										{
-											if (get_length == 0)
-												res = RX_TIMEOUT;
-											else
-												res = RX_CORRUPT;
+										m_Platform->FlushPort();
+										m_Platform->SetPacketTimeout(length);
 
-											break;
-										}
-								}
+										int get_length = 0;
+										if (DEBUG_PRINT == true)
+											fprintf(stderr, "RX: ");
+
+										while (1)
+											{
+												length = m_Platform->ReadPort(&rxpacket[get_length], to_length - get_length);
+												if (DEBUG_PRINT == true)
+													{
+														for (int n = 0; n < length; n++)
+															fprintf(stderr, "%.2X ", rxpacket[get_length + n]);
+													}
+												get_length += length;
+
+												if (get_length == to_length)
+														{
+															// Find packet header
+															int i;
+															for (i = 0; i < (get_length - 1); i++)
+																{
+																	if (rxpacket[i] == 0xFF && rxpacket[i + 1] == 0xFF)
+																		break;
+																	else if (i == (get_length - 2) && rxpacket[get_length - 1] == 0xFF)
+																		break;
+																}
+
+															if (i == 0)
+																{
+																	// Check checksum
+																	unsigned char checksum = CalculateChecksum(rxpacket);
+																	if (DEBUG_PRINT == true)
+																		fprintf(stderr, "CHK:%.2X\n", checksum);
+
+																	if (rxpacket[get_length - 1] == checksum)
+																		res = SUCCESS;
+																	else
+																		res = RX_CORRUPT;
+
+																	break;
+																}
+															else
+																{
+																	for (int j = 0; j < (get_length - i); j++)
+																		rxpacket[j] = rxpacket[j + i];
+																	get_length -= i;
+																}
+														}
+													else
+														{
+															if (m_Platform->IsPacketTimeout() == true)
+																{
+																	if (get_length == 0)
+																		res = RX_TIMEOUT;
+																	else
+																		res = RX_CORRUPT;
+
+																	break;
+																}
+														}
+											}
+									}
+								else
+									res = SUCCESS;
 							}
-						}
-					else
-						res = SUCCESS;
-				}
-			else
-				res = TX_FAIL;
-		}
-							
-    }
-
+						else
+							res = TX_FAIL;
+					}
+			}
 	else
 		res = TX_CORRUPT;
 
@@ -516,33 +507,47 @@ unsigned char ArbotixPro::CalculateChecksum(unsigned char *packet)
 	return (~checksum);
 }
 
+
+//FOR AX servos
 void ArbotixPro::MakeSyncReadPacket(int address, int length)
 {
         int number = 0;
 
-        m_SyncReadTxPacket[ID]              = (unsigned char)0xFD;
-        m_SyncReadTxPacket[INSTRUCTION]     = INST_SYNC_READ;
-
-        {
-                m_SyncReadTxPacket[PARAMETER ] = AXDXL::P_PRESENT_TEMPERATURE; // start address
-                m_SyncReadTxPacket[PARAMETER + 1] = 1;
-        }
-        if (m_bIncludeTempData == true){
-            for (int id = JointData::ID_MIN; id <= JointData::ID_MAX; id++)
-            {
-                if (MotionStatus::m_CurrentJoints.GetEnable(id))
-                    {
-                        m_SyncReadTxPacket[PARAMETER + number + 2] = id; // id
-                        number++;
-                    }
-            }
-        }
-        m_SyncReadTxPacket[PARAMETER + 2] = ArbotixPro::ID_CM; // id
-         number++;
-        //fprintf(stderr, "NUMBER : %d \n", number);
-        m_SyncReadTxPacket[LENGTH]          = (number) + 4;
+		if (m_bIncludeTempData == true){
+				m_SyncReadTxPacket[ID]              = (unsigned char)0xFD;
+				m_SyncReadTxPacket[INSTRUCTION]     = INST_SYNC_READ;
+				{
+						m_SyncReadTxPacket[PARAMETER ] = AXDXL::P_PRESENT_TEMPERATURE; // start address
+						m_SyncReadTxPacket[PARAMETER + 1] = 1;
+				}
+				if (m_bIncludeTempData == true){
+					for (int id = JointData::ID_MIN; id <= JointData::ID_MAX; id++)
+					{
+						if (MotionStatus::m_CurrentJoints.GetEnable(id))
+							{
+								m_SyncReadTxPacket[PARAMETER + number + 2] = id; // id
+								number++;
+							}
+					}
+				}
+				/**for(int id = 1; id < JointData::NUMBER_OF_JOINTS; id++)
+				{
+					if(MotionStatus::m_CurrentJoints.GetEnable(id))
+					{
+						m_BulkReadTxPacket[PARAMETER+3*number+1] = 2;   // length
+						m_BulkReadTxPacket[PARAMETER+3*number+2] = id;  // id
+						m_BulkReadTxPacket[PARAMETER+3*number+3] = AXDXL::P_PRESENT_POSITION_L; // start address
+						number++;
+					}
+				}*/
+				m_SyncReadTxPacket[PARAMETER + 2] = ArbotixPro::ID_CM; // id
+				number++;
+				//fprintf(stderr, "NUMBER : %d \n", number);
+				m_SyncReadTxPacket[LENGTH]          = (number) + 4;
+		}
 }
 
+//FOR other devices in Dynamixel bus.
 void ArbotixPro::MakeBulkReadPacket()
 {
 	int number = 0;
@@ -558,31 +563,6 @@ void ArbotixPro::MakeBulkReadPacket()
                 m_BulkReadTxPacket[PARAMETER + 3 * number + 3] = ArbotixPro::P_DXL_POWER;
                 number++;
         }
-
-//    for(int id = 1; id < JointData::NUMBER_OF_JOINTS; id++)
-//    {
-//        if(MotionStatus::m_CurrentJoints.GetEnable(id))
-//        {
-//            m_BulkReadTxPacket[PARAMETER+3*number+1] = 2;   // length
-//            m_BulkReadTxPacket[PARAMETER+3*number+2] = id;  // id
-//            m_BulkReadTxPacket[PARAMETER+3*number+3] = AXDXL::P_PRESENT_POSITION_L; // start address
-//            number++;
-//        }
-//    }
-        /**if (m_bIncludeTempData == true)
-                {
-                        for (int id = JointData::ID_MIN; id <= JointData::ID_MAX; id++)
-                                {
-                                        if (MotionStatus::m_CurrentJoints.GetEnable(id))
-                                                {
-                                                        m_BulkReadTxPacket[PARAMETER + 3 * number + 1] = 1; // length
-                                                        m_BulkReadTxPacket[PARAMETER + 3 * number + 2] = id; // id
-                                                        m_BulkReadTxPacket[PARAMETER + 3 * number + 3] = AXDXL::P_PRESENT_TEMPERATURE; // start address
-                                                        number++;
-                                                }
-                                }
-                }
-        */
         /*
         if(Ping(FSR::ID_L_FSR, 0) == SUCCESS)
         {
