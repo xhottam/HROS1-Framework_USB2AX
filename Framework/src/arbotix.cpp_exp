@@ -98,6 +98,7 @@ int ArbotixPro::TxRxSynckPacket(unsigned char *txpacket, unsigned char *rxpacket
                                   to_length += _len;
                                   m_BulkReadData[_id].length = _len;
                                   m_BulkReadData[_id].start_address = _addr;
+								  m_BulkReadData[_id].error = -1;
 
                             }
 						int get_length = 0;
@@ -170,9 +171,9 @@ int ArbotixPro::TxRxBulkPacket(unsigned char *txpacket, unsigned char *rxpacket,
         //fprintf(stderr, "\nArbotixPro::TxRxBulkPacket\n");
 
 
-    int to_length = 0; 
-	int res = TX_FAIL;
-	int length = txpacket[LENGTH] + 4;
+		int to_length = 0; 
+		int res = TX_FAIL;
+		int length = txpacket[LENGTH] + 4;
 
 			//fprintf(stderr, "\nTX: ");
 			//for (int n = 0; n < length; n++)

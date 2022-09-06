@@ -135,7 +135,7 @@ int ArbotixPro::TxRxBulkPacket(unsigned char *txpacket, unsigned char *rxpacket,
 				      for (int n = 0; n < length; n++)
 				           fprintf(stderr, "%.2X ", rxpacket[get_length + n]);
 		   	          }
-			  	  get_length += length;
+			  	    get_length += length;
 
 			          if (get_length == to_length)
 				      {
