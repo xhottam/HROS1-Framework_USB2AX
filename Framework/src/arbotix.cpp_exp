@@ -606,18 +606,18 @@ int ArbotixPro::SyncRead()
 int ArbotixPro::BulkRead()
 {
 	unsigned char rxpacket[MAXNUM_RXPARAM + 10] = {0, };
-    int _res;
+	int _res;
 	if (m_BulkReadTxPacket[LENGTH] != 0)
-    {
-        _res = SyncRead();
+	{
+		_res = SyncRead();
 		return TxRxPacket(m_BulkReadTxPacket, rxpacket, 0, true);
-    }
-    else
-		{
-			MakeBulkReadPacket();
-            MakeBulkSyncPacket();
-			return TX_FAIL;
-		}
+	}
+	else
+	{
+		MakeBulkReadPacket();
+		MakeBulkSyncPacket();
+		return TX_FAIL;
+	}
 }
 
 int ArbotixPro::SyncWrite(int start_addr, int each_length, int number, int *pParam)
