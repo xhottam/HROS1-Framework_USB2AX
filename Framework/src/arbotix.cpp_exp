@@ -540,11 +540,13 @@ void ArbotixPro::MakeSyncReadPacket(int address, int length)
 						number++;
 					}
 				}*/
+
 				m_SyncReadTxPacket[PARAMETER + 2] = ArbotixPro::ID_CM; // id
 				number++;
+				
 				//fprintf(stderr, "NUMBER : %d \n", number);
 				m_SyncReadTxPacket[LENGTH]          = (number) + 4;
-		}
+		}		
 }
 
 //FOR other devices in Dynamixel bus.
