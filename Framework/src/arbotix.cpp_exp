@@ -81,6 +81,7 @@ int ArbotixPro::TxRxSynckPacket(unsigned char *txpacket, unsigned char *rxpacket
         int to_length = 0;
         int res = TX_FAIL;
         int length = txpacket[LENGTH] + 4;
+		int num_servos = (length - ( PARAMETER  + 2 )) - 1;
 
               fprintf(stderr, "\nTX: ");
               for (int n = 0; n < length; n++)
@@ -88,8 +89,8 @@ int ArbotixPro::TxRxSynckPacket(unsigned char *txpacket, unsigned char *rxpacket
 
         if (m_Platform->WritePort(txpacket, length) == length){                        
                         m_Platform->SetPacketTimeout(length);
-                        int num = (length - ( PARAMETER  + 2 )) - 1;
-                        for (int x = 0; x < num; x++)
+                        
+                        for (int x = 0; x < num_servos; x++)
                             {
                                   int _id   = txpacket[PARAMETER + x + 2];
                                   int _len  = txpacket[PARAMETER + 1];
@@ -134,7 +135,7 @@ int ArbotixPro::TxRxSynckPacket(unsigned char *txpacket, unsigned char *rxpacket
 														fprintf(stderr, "CHK:%.2X\n", checksum);
 
 													if (rxpacket[get_length - 1] == checksum)
-														res = SUCCESS;
+                                           				res = SUCCESS;
 													else
 														res = RX_CORRUPT;
 
