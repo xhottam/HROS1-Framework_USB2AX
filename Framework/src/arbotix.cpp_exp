@@ -88,7 +88,6 @@ int ArbotixPro::TxRxSynckPacket(unsigned char *txpacket, unsigned char *rxpacket
 
         if (m_Platform->WritePort(txpacket, length) == length){                        
                         m_Platform->SetPacketTimeout(length);
-                        int get_length = 0;
                         int num = (length - ( PARAMETER  + 2 )) - 1;
                         for (int x = 0; x < num; x++)
                             {
@@ -101,6 +100,7 @@ int ArbotixPro::TxRxSynckPacket(unsigned char *txpacket, unsigned char *rxpacket
                                   m_BulkReadData[_id].start_address = _addr;
 
                             }
+						int get_length = 0;
                         to_length += 6;
                         fprintf(stderr, "\nRX: ");
                         while (1)
@@ -513,7 +513,7 @@ void ArbotixPro::MakeSyncReadPacket(int address, int length)
 {
         int number = 0;
 
-		if (m_bIncludeTempData == true){
+		if (m_bIncludeTempData == false){
 				m_SyncReadTxPacket[ID]              = (unsigned char)0xFD;
 				m_SyncReadTxPacket[INSTRUCTION]     = INST_SYNC_READ;
 				{
