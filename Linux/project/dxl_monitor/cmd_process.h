@@ -10,6 +10,7 @@ void Help();
 void Scan(Robot::ArbotixPro *arbotixpro);
 void Dump(Robot::ArbotixPro *arbotixpro, int id);
 void Reset(Robot::ArbotixPro *arbotixpro, int id);
+void Reebot_Usb2Ax(Robot::ArbotixPro *arbotixpro);
 void Write(Robot::ArbotixPro *arbotixpro, int id, int addr, int value);
 
 #endif

@@ -10,7 +10,7 @@
 #include "cmd_process.h"
 #include "mjpg_streamer.h"
 
-#define INI_FILE_PATH       "../../../Data/config.ini"
+#define INI_FILE_PATH       "../../../../Data/config.ini"
 
 using namespace Robot;
 
@@ -40,7 +40,7 @@ int main(int argc, char *argv[])
 
     change_current_dir();
 
-    LinuxArbotixPro linux_arbotixpro("/dev/ttyACM0");
+    LinuxArbotixPro linux_arbotixpro("/dev/usb2ax");
     ArbotixPro arbotixpro(&linux_arbotixpro);
     minIni* ini;
     if (argc == 2)

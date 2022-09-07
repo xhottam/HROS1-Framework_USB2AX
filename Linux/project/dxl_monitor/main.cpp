@@ -2,6 +2,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <signal.h>
+#include <unistd.h> 
 #include "LinuxDARwIn.h"
 #include "cmd_process.h"
 
@@ -12,7 +13,7 @@
 using namespace Robot;
 
 //LinuxArbotixPro linux_arbotixpro("/dev/ttyUSB0");
-LinuxArbotixPro linux_arbotixpro("/dev/ttyACM0");
+LinuxArbotixPro linux_arbotixpro("/dev/usb2ax");
 ArbotixPro arbotixpro(&linux_arbotixpro);
 
 int gID = ArbotixPro::ID_CM;
@@ -146,6 +147,12 @@ int main()
 						}
 					else if (strcmp(cmd, "d") == 0)
 						Dump(&arbotixpro, gID);
+                                        else if (strcmp(cmd, "reboot") == 0)
+                                                {
+                                                Reebot_Usb2Ax(&arbotixpro);
+						sleep(5);
+                                                arbotixpro.Connect();
+                                                }
 					else if (strcmp(cmd, "reset") == 0)
 						{
 							int firm_ver = 0;

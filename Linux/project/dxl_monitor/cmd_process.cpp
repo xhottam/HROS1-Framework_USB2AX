@@ -115,6 +115,7 @@ void Help()
 	printf( " id [ID] : Go to [ID]\n" );
 	printf( " d : Dumps the current control table of Arbotix Pro and all Dynamixels\n" );
 	printf( " reset : Defaults the value of current Dynamixel\n" );
+        printf( " reboot : Reboot USB2AX\n" );
 	printf( " reset all : Defaults the value of all Dynamixels\n" );
 	printf( " wr [ADDR] [VALUE] : Writes value [VALUE] to address [ADDR] of current Dynamixel\n" );
 	printf( " on/off : Turns torque on/off of current Dynamixel\n" );
@@ -208,6 +209,23 @@ void Dump(ArbotixPro *arbotixpro, int id)
 
 			printf( "\n" );
 		}
+        else if (id == 253)
+                {
+                        if (arbotixpro->ReadTable(253, 0, 4, &table[0], 0) != ArbotixPro::SUCCESS)
+                                {
+                                        printf(" Can not read table!\n");
+                                        return;
+                                }
+                        printf( "\n" );
+                        printf( " [EEPROM AREA]\n" );
+                        addr = AXDXL::P_MODEL_NUMBER_L; value = ArbotixPro::MakeWord(table[addr], table[addr + 1]);
+                        printf( " MODEL_NUMBER            (R) [%.3d]:%5d (L:0x%.2X H:0x%.2X)\n", addr, value, table[addr], table[addr + 1]);
+                        addr = AXDXL::P_VERSION; value = table[addr];
+                        printf( " VERSION                 (R) [%.3d]:%5d\n", addr, value);
+                        addr = AXDXL::P_ID; value = table[addr];
+                        printf( " ID                      (R) [%.3d]:%5d\n", addr, value);
+			
+                }
 	else // Actuator
 		{
 			if (arbotixpro->ReadTable(id, AXDXL::P_MODEL_NUMBER_L, AXDXL::P_PUNCH_H, &table[AXDXL::P_MODEL_NUMBER_L], 0) != ArbotixPro::SUCCESS)
@@ -289,6 +307,13 @@ void Dump(ArbotixPro *arbotixpro, int id)
 		}
 }
 
+void Reebot_Usb2Ax(ArbotixPro *arbotixpro){
+
+	if (arbotixpro->RebootUsb2Ax(0) == ArbotixPro::SUCCESS)
+		{
+			 printf( "USB2AX reboot now.\n" );
+		}
+}
 void Reset(Robot::ArbotixPro *arbotixpro, int id)
 {
 	int FailCount = 0;

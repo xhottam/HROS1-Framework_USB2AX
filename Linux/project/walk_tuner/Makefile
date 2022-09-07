@@ -7,7 +7,7 @@
 #
 ###############################################################
 
-TARGET = walk_tuner
+TARGET = bin/walk_tuner
 
 CXX = g++
 INCLUDE_DIRS = -I../../include -I../../../Framework/include
